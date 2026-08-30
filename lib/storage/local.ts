@@ -19,9 +19,11 @@ export class LocalStorageAdapter implements StorageAdapter {
     await fs.writeFile(path.join(this.directory, key), Buffer.from(await file.arrayBuffer()), { flag: 'wx' })
     return { key, publicUrl: this.getPublicUrl(key), bytes: file.size }
   }
-  async delete(key: string) {
+  async delete(resource: string) {
+    const key = resource.startsWith('/media/') ? decodeURIComponent(resource.split('/').pop()!) : resource
     if (path.basename(key) !== key) throw new Error('Invalid storage key.')
     try { await fs.unlink(path.join(this.directory, key)) } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
   }
   getPublicUrl(key: string) { return `/media/${encodeURIComponent(key)}` }
+  owns(resource: string) { return resource.startsWith('/media/') }
 }

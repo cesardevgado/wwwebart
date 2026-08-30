@@ -1,11 +1,12 @@
 {
-  "name": "open-catalog",
+  "name": "wwwebart",
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
+    "vercel-build": "npm run db:migrate && npm run db:seed && npm run build",
     "start": "next start",
     "lint": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
@@ -15,9 +16,10 @@
     "backup": "tsx scripts/backup.ts"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.15",
     "@next/mdx": "^16.3.2",
     "@types/mdx": "^2.0.13",
-    "better-sqlite3": "^12.4.1",
+    "@vercel/blob": "^2.0.0",
     "bcryptjs": "^3.0.2",
     "drizzle-orm": "^0.45.2",
     "lucide-react": "^0.468.0",
@@ -28,7 +30,6 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "@types/better-sqlite3": "^7.6.12",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.4.20",

@@ -1,78 +1,79 @@
-# Open Catalog
+# wwwebart
 
-An open-source artist portfolio with a deliberately small, self-hosted control panel. The public site remains an artwork-first digital exhibition catalog; `/admin` manages only the artist profile, links, artwork records, publication state, ordering, and media.
+A minimalist artist portfolio with an integrated, single-owner CMS. Deploy an independent copy to Vercel or run it locally with Docker.
 
-## Local setup
+## Deploy your own copy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcesardevgado%2Fwwwebart&project-name=wwwebart&repository-name=wwwebart&env=ADMIN_PASSWORD%2CSESSION_SECRET%2CSTORAGE_DRIVER%2CMAX_UPLOAD_MB&envDescription=Choose+an+admin+password+%2810%2B+characters%29+and+a+random+session+secret+%2832%2B+characters%29.&envDefaults=%7B%22STORAGE_DRIVER%22%3A%22vercel-blob%22%2C%22MAX_UPLOAD_MB%22%3A%2250%22%7D&stores=%5B%7B%22type%22%3A%22blob%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22tursocloud%22%2C%22productSlug%22%3A%22turso%22%2C%22protocol%22%3A%22storage%22%7D%5D)
+
+The deployment flow creates:
+
+- A new Git repository in your account, independent of this template.
+- A Vercel project for the Next.js application.
+- A Turso database for CMS content.
+- A public Vercel Blob store for uploaded artwork.
+
+During setup, choose an `ADMIN_PASSWORD` of at least 10 characters and generate a `SESSION_SECRET` of at least 32 random characters. Accept the Turso and Blob storage prompts. Vercel supplies their credentials automatically. The first build creates the database schema and sample portfolio.
+
+After deployment, visit `/admin`, sign in with your admin password, and replace the sample profile and artwork. Changes in the original `wwwebart` repository do not modify your copy, database, uploads, or running deployment.
+
+Vercel installations upload directly from the browser to Blob storage. `MAX_UPLOAD_MB` controls the per-file limit and defaults to 50 MB for local installations and the value selected during deployment for Vercel.
+
+## Local development
 
 ```bash
 cp .env.example .env
 npm install
-npm run db:generate   # only when changing db/schema.ts
 npm run db:migrate
 npm run db:seed
 npm run dev
 ```
 
-Set `ADMIN_PASSWORD` to at least 10 characters and `SESSION_SECRET` to at least 32 random characters before seeding. `db:seed` hashes the password with bcrypt; plaintext passwords and hashes are never sent to the browser. Changing `ADMIN_PASSWORD` followed by `npm run db:seed` replaces the owner password.
+Local development uses a libSQL-compatible SQLite file at `data/portfolio.db` and stores uploads under `data/uploads`. Open `http://localhost:3000/admin` and sign in with `ADMIN_PASSWORD`.
 
-Open `http://localhost:3000/admin`, sign in with `ADMIN_PASSWORD`, and use:
+The database and storage drivers are selected through environment variables:
 
-- **Profile** to edit the artist name, tagline, plain-text biography, portrait, and ordered social/contact links.
-- **Artworks** to add, edit, delete, reorder, draft, or publish work.
-- **Log out** to invalidate the HttpOnly session cookie.
+```env
+# Local or Docker
+DATABASE_PATH=./data/portfolio.db
+STORAGE_DRIVER=local
+UPLOAD_DIR=./data/uploads
 
-Sessions are HMAC-signed, HttpOnly, SameSite=Lax, and Secure in production. Every mutation repeats the authorization check. There is no registration or password-reset flow.
-
-## Artwork publishing
-
-New artworks default to **Draft**. Draft routes return 404 and drafts do not appear in the public archive or sitemap. Change Status to **Published** and save to make the work public immediately.
-
-The artwork list supports pointer drag-and-drop and accessible up/down buttons. Its saved order directly controls the public catalog; year does not override the curator's sequence. Deletion requires a second confirmation and removes locally uploaded media with the record.
-
-Supported media:
-
-- **Image:** JPG, PNG, WebP, GIF, or AVIF upload/URL, plus alternative text.
-- **Video:** MP4 or WebM upload/URL with autoplay, muted, loop, and controls options.
-- **Interactive:** a sandboxed external URL or developer-registered component key.
-- **External:** a link to work presented on another site.
-
-On the edit page, **Primary Media** is displayed first at the top of the public artwork page. Use **Additional Media** to attach more images, videos, and sandboxed iframe URLs to the same work. Drag these items—or use their up/down buttons—to control the single-column order shown after the primary media.
-
-Uploads are MIME- and extension-validated, size-limited, randomly renamed, stored outside `public`, and served through `/media/[key]` with content-type protection. Configure the limit with `MAX_UPLOAD_MB`.
-
-To register a trusted interactive component, add its key to `lib/interactive-registry.ts` and map its rendering in `components/ArtworkViewer.tsx`. Database JavaScript is never evaluated.
-
-## Data, storage, and backups
-
-By default editable state lives in:
-
-```text
-data/portfolio.db
-data/uploads/
+# Vercel
+TURSO_DATABASE_URL=libsql://...
+TURSO_AUTH_TOKEN=...
+STORAGE_DRIVER=vercel-blob
+BLOB_READ_WRITE_TOKEN=...
 ```
 
-Back up both with `npm run backup`. This creates a timestamped copy under `backups/`. Test restoring backups periodically. `lib/storage/types.ts` defines the storage adapter contract; `LocalStorageAdapter` is the included implementation and can later be replaced with S3 or R2.
+## CMS features
 
-## Production and self-hosting
+- Edit the artist profile, portrait, biography, and ordered links.
+- Create, draft, publish, delete, and reorder artworks.
+- Present images, videos, external links, sandboxed iframes, and registered interactive components.
+- Attach and order multiple media items per artwork.
+- Serve uploaded local files through a protected media route or use Vercel Blob URLs in cloud deployments.
 
-For a regular Node host or VPS:
+Sessions are HMAC-signed, HttpOnly, SameSite=Lax, and Secure in production. Every mutation checks authentication again. There is no public registration or password-reset flow.
+
+## Self-hosting with Docker
+
+Create `.env`, then run:
 
 ```bash
-npm run db:migrate
-npm run db:seed
-npm run build
-npm start
+docker compose up -d
 ```
 
-Keep the database and uploads on a persistent disk. A reverse proxy should provide HTTPS, which activates Secure session cookies.
-
-Docker is included. Create `.env`, then run `docker compose up -d`. The `portfolio_data` volume persists `/data`.
-
-Serverless hosts such as Vercel generally do not offer persistent writable filesystems. For those environments, replace local SQLite with a persistent compatible database and implement the same storage interface using R2/S3-compatible object storage. No Vercel-specific API is required.
+The `portfolio_data` volume persists the SQLite database and uploads. Back up a local installation with `npm run backup`. Cloud deployments should use Turso's backup tools and the Vercel Blob dashboard.
 
 ## Development
 
-Use `npm run lint` and `npm run build`. Theme colors, font, navigation height, canonical URL, and fallback SEO text remain in `config/site.ts`. The CMS-managed database is the primary content source; old MDX examples are retained only as developer reference.
+```bash
+npm run lint
+npm run build
+```
+
+Run `npm run db:generate` after changing `db/schema.ts`. Theme and fallback SEO settings live in `config/site.ts`; content edited through the CMS lives in the configured database.
 
 ## License
 

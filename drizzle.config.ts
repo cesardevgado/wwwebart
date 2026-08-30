@@ -4,5 +4,5 @@ export default defineConfig({
   schema: './db/schema.ts',
   out: './db/migrations',
   dialect: 'sqlite',
-  dbCredentials: { url: process.env.DATABASE_PATH ?? './data/portfolio.db' },
+  dbCredentials: { url: process.env.TURSO_DATABASE_URL ?? process.env.DATABASE_PATH ?? './data/portfolio.db' },
 })
