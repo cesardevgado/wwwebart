@@ -10,6 +10,7 @@ const contentTypes = {
 export async function POST(request: Request) {
   if (!await isAuthenticated()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (process.env.STORAGE_DRIVER !== 'vercel-blob') return NextResponse.json({ error: 'Cloud uploads are not configured.' }, { status: 400 })
+  if (!process.env.BLOB_READ_WRITE_TOKEN) return NextResponse.json({ error: 'The Blob store is not connected to this deployment.' }, { status: 503 })
 
   try {
     const body = await request.json() as HandleUploadBody
@@ -25,10 +26,10 @@ export async function POST(request: Request) {
           addRandomSuffix: true,
         }
       },
-      onUploadCompleted: async () => {},
     })
     return NextResponse.json(response)
   } catch (error) {
+    console.error('Blob client-token generation failed:', error)
     return NextResponse.json({ error: (error as Error).message }, { status: 400 })
   }
 }
