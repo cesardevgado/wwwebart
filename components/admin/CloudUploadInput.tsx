@@ -1,6 +1,6 @@
 'use client'
 
-import { upload } from '@vercel/blob/client'
+import { uploadPresigned } from '@vercel/blob/client'
 import { useState } from 'react'
 
 export function CloudUploadInput({ id, label, kind, fieldName }: { id: string; label: string; kind: 'image' | 'video'; fieldName: string }) {
@@ -20,7 +20,7 @@ export function CloudUploadInput({ id, label, kind, fieldName }: { id: string; l
         if (!file) return
         setStatus('Uploading…')
         try {
-          const blob = await upload(file.name, file, { access: 'public', handleUploadUrl: '/api/upload', clientPayload: kind })
+          const blob = await uploadPresigned(file.name, file, { access: 'public', handleUploadUrl: '/api/upload', clientPayload: kind })
           setUrl(blob.url)
           setStatus('Upload complete.')
         } catch (error) {
