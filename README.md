@@ -4,7 +4,7 @@ A minimalist artist portfolio with an integrated, single-owner CMS. Deploy an in
 
 ## Deploy your own copy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcesardevgado%2Fwwwebart&project-name=wwwebart&repository-name=wwwebart&env=ADMIN_PASSWORD%2CSESSION_SECRET%2CSTORAGE_DRIVER%2CMAX_UPLOAD_MB&envDescription=Choose+an+admin+password+%2810%2B+characters%29+and+a+random+session+secret+%2832%2B+characters%29.&envDefaults=%7B%22STORAGE_DRIVER%22%3A%22vercel-blob%22%2C%22MAX_UPLOAD_MB%22%3A%2250%22%7D&stores=%5B%7B%22type%22%3A%22blob%22%7D%5D&products=%255B%257B%2522type%2522%253A%2522integration%2522%252C%2522protocol%2522%253A%2522storage%2522%252C%2522productSlug%2522%253A%2522database%2522%252C%2522integrationSlug%2522%253A%2522tursocloud%2522%257D%255D&skippable-integrations=0)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcesardevgado%2Fwwwebart&project-name=wwwebart&repository-name=wwwebart&env=ADMIN_PASSWORD%2CSESSION_SECRET%2CSTORAGE_DRIVER%2CMAX_UPLOAD_MB&envDescription=Choose+an+admin+password+%2810%2B+characters%29+and+a+random+session+secret+%2832%2B+characters%29.&envDefaults=%7B%22STORAGE_DRIVER%22%3A%22vercel-blob%22%2C%22MAX_UPLOAD_MB%22%3A%2250%22%7D&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22database%22%2C%22integrationSlug%22%3A%22tursocloud%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D&skippable-integrations=0)
 
 The deployment flow creates:
 
