@@ -1,0 +1,12 @@
+services:
+  portfolio:
+    build: .
+    ports: ["3000:3000"]
+    env_file: .env
+    environment:
+      DATABASE_PATH: /data/portfolio.db
+      UPLOAD_DIR: /data/uploads
+    volumes: ["portfolio_data:/data"]
+    restart: unless-stopped
+volumes:
+  portfolio_data:

@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Echo Chamber</title>
+<style>
+  *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#dedbd0}
+  body{display:grid;place-items:center}
+  i{position:absolute;width:9vmin;height:9vmin;border:1px solid #111;border-radius:50%;animation:echo 7s infinite ease-out;opacity:0}
+  i:nth-child(2){animation-delay:1s}i:nth-child(3){animation-delay:2s}i:nth-child(4){animation-delay:3s}i:nth-child(5){animation-delay:4s}i:nth-child(6){animation-delay:5s}
+  b{width:8px;height:8px;background:#e33d1f;border-radius:50%}
+  @keyframes echo{0%{transform:scale(.3);opacity:0}10%{opacity:1}100%{transform:scale(16);opacity:0}}
+  @media(prefers-reduced-motion:reduce){i{animation-play-state:paused;opacity:.4}i:nth-child(2){transform:scale(3)}i:nth-child(3){transform:scale(6)}i:nth-child(4){transform:scale(9)}}
+</style>
+<body aria-label="Animated concentric circles expanding from a red point"><b></b><i></i><i></i><i></i><i></i><i></i><i></i></body>
+</html>
