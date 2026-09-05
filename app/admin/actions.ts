@@ -48,7 +48,7 @@ export async function saveProfileAction(_: ActionState, formData: FormData): Pro
     await tx.delete(socialLinks).run()
     if (linkResult.data.length) await tx.insert(socialLinks).values(linkResult.data.map((link, sortOrder) => ({ ...link, sortOrder }))).run()
   })
-  revalidatePath('/'); revalidatePath('/about'); return { success: 'Profile updated.' }
+  revalidatePath('/', 'layout'); return { success: 'Profile updated.' }
 }
 
 export async function saveArtworkAction(id: number | null, _: ActionState, formData: FormData): Promise<ActionState> {
