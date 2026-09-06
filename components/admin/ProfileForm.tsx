@@ -11,7 +11,11 @@ export function ProfileForm({ profile, links, cloudUploads = false }: { profile:
   return <form action={action} encType="multipart/form-data" className="mt-10 space-y-7">
     <div><label className="admin-label" htmlFor="artistName">Artist name</label><input className="admin-input" id="artistName" name="artistName" defaultValue={profile.artistName} required /></div>
     <div><label className="admin-label" htmlFor="subtitle">Subtitle / tagline</label><input className="admin-input" id="subtitle" name="subtitle" defaultValue={profile.subtitle} /></div>
-    <div><label className="admin-label" htmlFor="bio">Biography</label><textarea className="admin-input" id="bio" name="bio" defaultValue={profile.bio} rows={10} /></div>
+    <div>
+      <label className="admin-label" htmlFor="bio">Biography</label>
+      <textarea className="admin-input" id="bio" name="bio" defaultValue={profile.bio} rows={10} aria-describedby="bio-format-help" />
+      <p id="bio-format-help" className="mt-2 text-xs text-black/55">Line breaks are preserved. Use <code>**bold**</code> for <strong>bold</strong> and <code>*italics*</code> for <em>italics</em>.</p>
+    </div>
     <div>{cloudUploads ? <CloudUploadInput id="portrait" label="Replace portrait" kind="image" fieldName="uploadedPortraitUrl" /> : <><label className="admin-label" htmlFor="portrait">Replace portrait</label><input className="admin-input pt-3" id="portrait" name="portrait" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" /></>}<p className="mt-2 text-xs text-black/55">Leave empty to keep the current portrait.</p></div>
     <SocialLinksEditor initialLinks={links} />
     {state.error && <p role="alert" className="text-sm text-red-800">{state.error}</p>}{state.success && <p role="status" className="text-sm text-green-800">{state.success}</p>}
